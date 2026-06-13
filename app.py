@@ -1,3 +1,4 @@
+from src.medical_rag import ask_medical_rag
 from src.image_analyzer import analyze_image
 import sys
 import os
@@ -221,11 +222,29 @@ elif module == "Vital Analysis":
 # ==========================
 # MEDICAL RAG
 # ==========================
-
 elif module == "Medical RAG":
 
     st.header("📚 Medical RAG Assistant")
 
-    st.info(
-        "Coming Soon"
+    question = st.text_input(
+        "Ask a Medical Question",
+        placeholder="Example: What are symptoms of anemia?"
     )
+
+    if st.button("Ask AI Doctor"):
+
+        if question.strip():
+
+            with st.spinner(
+                "Searching medical knowledge..."
+            ):
+
+                result = ask_medical_rag(
+                    question
+                )
+
+            st.success(
+                "Answer Generated"
+            )
+
+            st.markdown(result)
