@@ -10,9 +10,6 @@ import streamlit as st
 from symptom_analyzer import analyze_symptoms
 from report_analyzer import analyze_report
 from vital_analyzer import analyze_vitals
-from conversation_analyzer import analyze_conversation
-from summary_generator import generate_summary
-from pdf_generator import create_pdf
 
 st.set_page_config(
     page_title="AI Doctor",
@@ -23,6 +20,7 @@ st.set_page_config(
 # ==========================
 # SIDEBAR
 # ==========================
+
 st.sidebar.title("🩺 AI Doctor")
 
 module = st.sidebar.radio(
@@ -32,9 +30,7 @@ module = st.sidebar.radio(
         "Medical Report Analysis",
         "Medical Image Analysis",
         "Vital Analysis",
-        "Medical RAG",
-        "Conversation Analysis",
-        "Patient Summary"
+        "Medical RAG"
     ]
 )
 
@@ -59,7 +55,7 @@ st.divider()
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric("Modules", "7")
+    st.metric("Modules", "5")
 
 with col2:
     st.metric("AI Engine", "Hugging Face")
@@ -201,40 +197,38 @@ elif module == "Vital Analysis":
         value=98
     )
 
-    temperature = st.number_input(
-        "Temperature (°F)",
-        min_value=90.0,
-        max_value=110.0,
-        value=98.6
-    )
+   temperature = st.number_input(
+    "Temperature (°F)",
+    min_value=90.0,
+    max_value=110.0,
+    value=98.6
+   )
+   age = st.number_input(
+    "Age",
+    min_value=1,
+    max_value=120,
+    value=25
+)
 
-    age = st.number_input(
-        "Age",
-        min_value=1,
-        max_value=120,
-        value=25
-    )
+weight = st.number_input(
+    "Weight (kg)",
+    min_value=1.0,
+    max_value=300.0,
+    value=70.0
+)
 
-    weight = st.number_input(
-        "Weight (kg)",
-        min_value=1.0,
-        max_value=300.0,
-        value=70.0
-    )
+height = st.number_input(
+    "Height (cm)",
+    min_value=50.0,
+    max_value=250.0,
+    value=170.0
+)
 
-    height = st.number_input(
-        "Height (cm)",
-        min_value=50.0,
-        max_value=250.0,
-        value=170.0
-    )
+bmi = weight / ((height / 100) ** 2)
 
-    bmi = weight / ((height / 100) ** 2)
-
-    st.info(
-        f"Calculated BMI: {bmi:.1f}"
-    )
-
+st.info(
+    f"Calculated BMI: {bmi:.1f}"
+)app
     if st.button("Analyze Vitals"):
 
         with st.spinner("Analyzing vitals..."):
@@ -279,101 +273,3 @@ elif module == "Medical RAG":
             )
 
             st.markdown(result)
-# ==========================
-# AI MEDICAL ASSISTANT
-# ==========================
-elif module == "Conversation Analysis":
-
-    st.header("🩺 AI Medical Assistant")
-
-    conversation = st.text_area(
-        "Describe Your Symptoms or Ask a Medical Question",
-        height=250,
-        placeholder="""
-I have fever, headache and body pain for 4 days.
-I also have diabetes.
-Should I be worried?
-"""
-    )
-
-    if st.button("Analyze Symptoms"):
-
-        if conversation.strip():
-
-            with st.spinner(
-                "Analyzing..."
-            ):
-
-                result = analyze_conversation(
-                    conversation
-                )
-
-            st.success(
-                "Analysis Complete"
-            )
-
-            st.markdown(result)
-
-# ==========================
-# PATIENT SUMMARY
-# ==========================
-elif module == "Patient Summary":
-
-    st.header("📋 Patient Summary Generator")
-
-    age = st.number_input(
-        "Age",
-        min_value=1,
-        max_value=120,
-        value=25
-    )
-
-    symptoms = st.text_area(
-        "Symptoms",
-        placeholder="Fever, headache, body pain..."
-    )
-
-    medical_history = st.text_area(
-        "Medical History",
-        placeholder="Diabetes, hypertension..."
-    )
-
-    vitals = st.text_area(
-        "Vitals",
-        placeholder="BP: 120/80, SpO2: 98%, HR: 72 bpm"
-    )
-
-    if st.button("Generate Summary"):
-
-        with st.spinner(
-            "Generating patient summary..."
-        ):
-
-            result = generate_summary(
-                age,
-                symptoms,
-                medical_history,
-                vitals
-            )
-
-        st.success(
-            "Summary Generated"
-        )
-
-        st.markdown(result)
-
-        pdf_file = create_pdf(
-            result
-        )
-
-        with open(
-            pdf_file,
-            "rb"
-        ) as file:
-
-            st.download_button(
-                label="📄 Download PDF Report",
-                data=file,
-                file_name="patient_summary.pdf",
-                mime="application/pdf"
-            )
