@@ -1,3 +1,4 @@
+from src.doctor_chat import ask_doctor
 from src.medical_rag import ask_medical_rag
 from src.image_analyzer import analyze_image
 import sys
@@ -34,7 +35,8 @@ module = st.sidebar.radio(
         "Vital Analysis",
         "Medical RAG",
         "Conversation Analysis",
-        "Patient Summary"
+        "Patient Summary",
+        "AI Doctor Chat"
     ]
 )
 
@@ -59,7 +61,7 @@ st.divider()
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric("Modules", "7")
+    st.metric("Modules", "8")
 
 with col2:
     st.metric("AI Engine", "Hugging Face")
@@ -377,3 +379,36 @@ elif module == "Patient Summary":
                 file_name="patient_summary.pdf",
                 mime="application/pdf"
             )
+# ==========================
+# AI DOCTOR CHAT
+# ==========================
+elif module == "AI Doctor Chat":
+
+    st.header("💬 AI Doctor Chat")
+
+    question = st.text_area(
+        "Describe your health concern",
+        height=200,
+        placeholder="""
+I have fever and headache for 3 days.
+I am diabetic.
+My BP is 140/90.
+Should I be worried?
+"""
+    )
+
+    if st.button("Ask AI Doctor"):
+
+        if question.strip():
+
+            with st.spinner("Analyzing..."):
+
+                result = ask_doctor(
+                    question
+                )
+
+            st.success(
+                "Analysis Complete"
+            )
+
+            st.markdown(result)
