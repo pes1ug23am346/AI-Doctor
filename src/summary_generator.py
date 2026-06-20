@@ -68,3 +68,15 @@ Consult a qualified healthcare professional.
 
 Keep the report professional, concise, and easy to read.
 """
+
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    )
+
+    return response.choices[0].message.content
